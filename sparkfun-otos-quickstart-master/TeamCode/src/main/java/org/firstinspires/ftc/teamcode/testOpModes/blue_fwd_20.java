@@ -27,7 +27,7 @@ public class blue_fwd_20 extends LinearOpMode {
         //wait(100);
         Actions.runBlocking(
                 drive.actionBuilder(beginPose)
-                        .strafeTo(new Vector2d(3.5,0))
+                        .strafeTo(new Vector2d(-3.5,0))
                         .build());
     }
 }

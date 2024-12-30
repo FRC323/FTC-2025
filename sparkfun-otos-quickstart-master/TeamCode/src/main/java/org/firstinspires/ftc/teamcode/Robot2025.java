@@ -29,25 +29,20 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /**
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -80,7 +75,7 @@ public class Robot2025 extends OpMode
     private DcMotorEx armMotor2 = null;
     
     private Servo wristRotate1 = null;
-    private Servo wristRotate2 = null;
+    private Servo clawRotate = null;
     private Servo wristTwist = null;
     private Servo claw = null;
 
@@ -112,7 +107,7 @@ public class Robot2025 extends OpMode
     int elevatorIndex = 0;
 
     //CHANGE ME
-    int[] elevatorSetpoints = {0,200,300,650,900,1120,1500};
+    int[] elevatorSetpoints = {0,300,375,812,1125,1400,2550};
     //int[] elevatorSetpoints = {0,200,300,650,900,1120,1500,1400,1400,1400,1400,1400,1400};
 
     double maxVelocity = 0;
@@ -153,21 +148,18 @@ public class Robot2025 extends OpMode
         // Elevator
         elevator1 = hardwareMap.get(DcMotorEx.class, "left_elevator");
         elevator2 = hardwareMap.get(DcMotorEx.class, "right_elevator");
-        //elevator3 = hardwareMap.get(DcMotorEx.class, "elevator3");
-        
+
         elevator2.setDirection(DcMotor.Direction.REVERSE);
         
         elevator1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         elevator2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //elevator3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        
+
         elevator1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         elevator2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //elevator3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         elevator1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         elevator2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //elevator3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        
+
         // Wrist Motor 
         armMotor1 = hardwareMap.get(DcMotorEx.class, "arm_motor1");
         armMotor2 = hardwareMap.get(DcMotorEx.class, "arm_motor2");
@@ -183,18 +175,16 @@ public class Robot2025 extends OpMode
         
         //Servos
         wristRotate1 = hardwareMap.servo.get("wristRotate1");
-        wristRotate2 = hardwareMap.servo.get("wristRotate2");
+        clawRotate = hardwareMap.servo.get("wristRotate2");
         wristTwist = hardwareMap.servo.get("wristTwist");
         claw = hardwareMap.servo.get("claw");
         
-        wristRotate2.setDirection(Servo.Direction.REVERSE);
-        //armRotateTop.setDirection(Servo.Direction.REVERSE);
-        
-        
+        wristRotate1.setDirection(Servo.Direction.REVERSE);
+        claw.setDirection(Servo.Direction.REVERSE);
+
         elevatorHome = hardwareMap.digitalChannel.get("elevatorHome");
         armHome = hardwareMap.digitalChannel.get("armHome");
-        
-        
+
         
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -252,12 +242,12 @@ public class Robot2025 extends OpMode
         armMotor2.setTargetPositionTolerance(20);
         
         // Set starting positions for arm and pickup
-        wristRotate1.setPosition(servoCenter);
-        wristRotate2.setPosition(servoCenter);
-        wristRotate1.setPosition(.3 + .03);
-        wristRotate2.setPosition(.3);
-        wristTwist.setPosition(1);
-        claw.setPosition(.3);
+        //wristRotate1.setPosition(servoCenter);
+        //clawRotate.setPosition(servoCenter);
+        wristRotate1.setPosition(.3);
+        clawRotate.setPosition(.5);
+        wristTwist.setPosition(.78);
+        claw.setPosition(.5);
         firstScan = true;
 
 
@@ -283,12 +273,12 @@ public class Robot2025 extends OpMode
         
         //---------------------- Non-Linearize Joysticks -------------
         
-        if(gamepad1.right_bumper)
-        {
-        x = x * .68;
-        y = y * .68;
-        rotation = rotation * .55;
-        }
+        //if(gamepad1.right_bumper)
+        //{
+        //x = x * .68;
+        //y = y * .68;
+        //rotation = rotation * .55;
+        //}
         x = .8*Math.pow(x,3)+(1-.8)*x;
         y = .8*Math.pow(y,3)+(1-.8)*y;
         rotation = (.7*Math.pow(rotation,3)+(1-.7)*rotation);
@@ -321,7 +311,7 @@ public class Robot2025 extends OpMode
         if(gamepad1.back)
             imu.initialize(parameters);    
         
-        
+        //-----------------------------------------------------------------
         //---------------------Pickup Gamepiece----------------------------
 
 
@@ -329,41 +319,45 @@ public class Robot2025 extends OpMode
         //wrist = (wrist/2) +.5;
 
         if(gamepad1.right_bumper && pickupSequence <= 50) {
-            if (pickupSequence > -1 && pickupSequence < 20) {
-                wristRotate1.setPosition(.3 + .03);
-                wristRotate2.setPosition(.3);
-                wristTwist.setPosition(1);
+            if (pickupSequence > -1 && pickupSequence < 15) {
+                wristRotate1.setPosition(.3);
+                //wristRotate2.setPosition(.3);
+                wristTwist.setPosition(.78);
                 claw.setPosition(.5);
                 pickupSequence++;
             }
-            if (pickupSequence > 19 && pickupSequence <= 50) {
-                wristRotate1.setPosition(.48 + .03);
-                wristRotate2.setPosition(.48);
-                claw.setPosition(.25);
+            if (pickupSequence > 14 && pickupSequence <= 50) {
+                wristRotate1.setPosition(.48);
+                //wristRotate2.setPosition(.48);
+                claw.setPosition(1);
                 pickupSequence++;
             }
         }
             if (!gamepad1.right_bumper && pickupSequence > 20) {
                 pickupSequence = 0;
-                wristRotate1.setPosition(.3 + .03);
-                wristRotate2.setPosition(.3);
-                wristTwist.setPosition(1);
-                claw.setPosition(.25);
+                wristRotate1.setPosition(.3);
+                //wristRotate2.setPosition(.3);
+                wristTwist.setPosition(.78);
+                claw.setPosition(1);
             }
 
+            if (gamepad2.a &! gamepad1.left_bumper &! gamepad1.right_bumper) {
+                wristRotate1.setPosition(0.0);
+                //wristRotate2.setPosition(.15);
+            }
 //----------------------------Release Gamepiece---------------------------------
 
             if (gamepad1.left_bumper && releaseSequence <= 40) {
                 if (releaseSequence > -1 && releaseSequence < 30) {
-                    wristRotate1.setPosition(.3 + .03);
-                    wristRotate2.setPosition(.3);
+                    wristRotate1.setPosition(.48);
+                    //wristRotate2.setPosition(.48);
                     wristTwist.setPosition(0);
-                    claw.setPosition(.25);
+                    claw.setPosition(1);
                     releaseSequence++;
                 }
                 if (releaseSequence > 29 && releaseSequence <= 40) {
-                    wristRotate1.setPosition(.48 + .03);
-                    wristRotate2.setPosition(.48);
+                    wristRotate1.setPosition(.45);
+                    //wristRotate2.setPosition(.48);
                     claw.setPosition(.5);
                     releaseSequence++;
                 }
@@ -371,49 +365,13 @@ public class Robot2025 extends OpMode
 
             if (!gamepad1.left_bumper && releaseSequence > 39) {
                 releaseSequence = 0;
-                wristRotate1.setPosition(.48 + .03);
-                wristRotate2.setPosition(.48);
-            wristTwist.setPosition(1);
-            claw.setPosition(.25);
+                wristRotate1.setPosition(.48);
+                //wristRotate2.setPosition(.48);
+            wristTwist.setPosition(78);
+            claw.setPosition(1);
         }
 
 
-
-
-        /*       if (gamepad1.x || gamepad2.x)
-            {
-            armRotateBot.setPosition(servoLeft);
-            armRotateTop.setPosition(servoLeft);
-            if(wristHome == 0)
-                {
-                wristMotor.setTargetPosition(15);
-                wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wristMotor.setPower(0.80);
-                }
-            }
-        if(gamepad1.y || gamepad2.y)
-            {
-            armRotateBot.setPosition(servoCenter);
-            armRotateTop.setPosition(servoCenter);
-            if(wristHome == 0)
-                {
-                wristMotor.setTargetPosition(15);
-                wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wristMotor.setPower(0.80);
-                }
-            }
-        if(gamepad1.b || gamepad2.b)
-            {
-            armRotateBot.setPosition(servoRight);
-            armRotateTop.setPosition(servoRight);
-            if(wristHome > 0)
-                {
-                wristMotor.setTargetPosition(15);
-                wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wristMotor.setPower(0.80);
-                }
-            }
-*/
         //----------------------Arm Rotation---------------------------
          double ArmUp =gamepad2.left_trigger;
         double ArmUp2 =gamepad2.right_trigger;
@@ -429,29 +387,29 @@ public class Robot2025 extends OpMode
             }
         if(gamepad2.left_bumper && !gamepad2.dpad_right)
             {
-            armMotor1.setTargetPosition(-50);
-            armMotor2.setTargetPosition(-50);
+            armMotor1.setTargetPosition(-65);
+            armMotor2.setTargetPosition(-65);
             armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotor1.setPower(.35);
-            armMotor2.setPower(.35);
+            armMotor1.setPower(.55);
+            armMotor2.setPower(.55);
             }
         else if(gamepad2.dpad_right && gamepad2.left_bumper) {
-            armMotor1.setTargetPosition(200);
-            armMotor2.setTargetPosition(200);
+            armMotor1.setTargetPosition(300);
+            armMotor2.setTargetPosition(300);
             armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotor1.setPower(.35);
-            armMotor2.setPower(.35);
+            armMotor1.setPower(.50);
+            armMotor2.setPower(.50);
         }
          else if(gamepad2.right_bumper)
              {
-                 armMotor1.setTargetPosition(1100);
-                 armMotor2.setTargetPosition(1100);
+                 armMotor1.setTargetPosition(1150);
+                 armMotor2.setTargetPosition(1150);
                  armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                  armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                 armMotor1.setPower(.35);
-                 armMotor2.setPower(.35);
+                 armMotor1.setPower(.50);
+                 armMotor2.setPower(.50);
              }
 
          else if(ArmUp > .5 || ArmUp2 > .5)
@@ -460,145 +418,18 @@ public class Robot2025 extends OpMode
                 armMotor2.setTargetPosition(0);
                 armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armMotor1.setPower(.45);
-                armMotor2.setPower(.45);
+                armMotor1.setPower(.65);
+                armMotor2.setPower(.65);
             }
          }
 
 
-        //if(gamepad2.dpad_left)
-        //{
-        //    wristMotor.setTargetPosition(130);
-        //    wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //    wristMotor.setPower(0.90);
-        //}
-        
-        //if(gamepad2.dpad_right)
-        //{
-        //    wristMotor.setTargetPosition(10);
-        //    wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //    wristMotor.setPower(0.70);
-        //}
-        
-        
-/*
-        //-----------------Release Stone Sequence-------------------
-        
-        double leftStoneDistance = leftDistance.getDistance(DistanceUnit.CM);
-        double rightStoneDistance = rightDistance.getDistance(DistanceUnit.CM);
-        
-        if(gamepad1.left_bumper )
-        {
-            pickupSequence = 0;
-            if(releaseSequence > -1 && releaseSequence < 8)
-                {
-                //rightLift.setPosition(0.45);
-                //leftLift.setPosition(0.45);
-                wristMotor.setTargetPosition(110);
-                wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wristMotor.setPower(0.70);
-                releaseSequence = releaseSequence + 1;
-                }
-        }  
-        if(!gamepad1.left_bumper && releaseSequence > 7 )
-        {
-            if (releaseSequence > 7 && releaseSequence < 15)
-                {
-                wristMotor.setTargetPosition(125);
-                wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wristMotor.setPower(0.70);
-                releaseSequence++;
-                }
-            if (releaseSequence > 14 && releaseSequence < 25)
-                {
-                stoneLatch.setPosition(0.28);
-                releaseSequence++;
-                }
-            if (releaseSequence > 24 && releaseSequence < 28)
-                {
-                wristMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                wristMotor.setPower(-.6);
-                releaseSequence++;
-                }    
-            if (releaseSequence > 27 && releaseSequence < 35)
-                {
-                wristEncoder = wristMotor.getCurrentPosition();
-                if (lastWristEncoder >= wristEncoder - 1 && lastWristEncoder <= wristEncoder + 1)
-                releaseSequence++;
-                lastWristEncoder = wristEncoder;
-                }
-            if(releaseSequence > 34 && releaseSequence < 38)    
-                { 
-                wristMotor.setTargetPosition(0);
-                wristMotor.setPower(0.0);
-                wristMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                wristMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-                releaseSequence++;
-                }
-            if(releaseSequence > 37 && releaseSequence <= 39)
-                {
-                wristMotor.setTargetPosition(15);
-                wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wristMotor.setPower(0.80);
-                releaseSequence++;
-                }
-            if(releaseSequence == 39)
-                {
-                releaseSequence = 0;
-                pickupSequence = 0;
-                }
-         }   
-        
-         //-----------------Pickup Stone Sequence-------------------    
-        if(gamepad1.left_trigger > .5)
-        {   
-            if(pickupSequence == 0)
-                {
-                wristMotor.setTargetPosition(122);
-                wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wristMotor.setPower(0.90);
-                pickupSequence = 1;
-                releaseSequence = 0;
-                double ccR = (rightColor.red() / rightColor.blue()) * (rightColor.green() / rightColor.blue());
-
-                }
-            if((leftStoneDistance < 2.0 && rightStoneDistance < 2.0) && pickupSequence > 0 && pickupSequence < 12)   
-                { 
-                //rightLift.setPosition(0.52);
-                //leftLift.setPosition(0.52);
-                wristMotor.setTargetPosition(132);
-                wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wristMotor.setPower(1.0);
-                if(pickupSequence > 3)
-                stoneLatch.setPosition(0-.020);
-                pickupSequence = pickupSequence + 1;
-                }
-                
-            if(pickupSequence > 11 && pickupSequence <= 35)
-                {
-                //rightLift.setPosition(0.15);
-                //leftLift.setPosition(0.15);
-                wristMotor.setTargetPosition(15);
-                wristMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                wristMotor.setPower(0.90);
-                pickupSequence = pickupSequence + 1;
-                }
-         }
-         
-         if(pickupSequence > 35 && gamepad1.left_trigger < .5)
-                {
-                pickupSequence = 0;
-                releaseSequence = 0;
-                }
-        
-
- */
-        //-----------------Run Elevator----------------
+         //-----------------Run Elevator----------------
 
         double ArmDown =gamepad2.left_trigger;
         double elevatorDn2 =gamepad2.right_trigger;
-        
-        if(( gamepad2.right_bumper  || gamepad2.left_bumper || firstScan) && !upPulse)
+
+        if(( gamepad2.right_bumper  || gamepad2.left_bumper || firstScan) && !upPulse && !gamepad2.a)
             {
             elevatorIndex++;
             if(elevatorIndex > 5)
@@ -661,8 +492,16 @@ public class Robot2025 extends OpMode
             }
         if(!gamepad2.dpad_down && dnIndex)
             dnIndex = false;
-            
-        
+
+        if (gamepad2.a)
+        {
+            double eleMotor = -gamepad2.right_stick_y;
+            elevator1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            elevator2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            elevator1.setPower(eleMotor);
+            elevator2.setPower(eleMotor);
+        }
+
         //------------------------- Home elevator encoders ------------------
         
         if((gamepad2.back) &! eleHomeLatch)
@@ -670,8 +509,8 @@ public class Robot2025 extends OpMode
             eleHomeLatch = true;
             elevator1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             elevator2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            elevator1.setPower(-.45);
-            elevator2.setPower(-.45);
+            elevator1.setPower(-.50);
+            elevator2.setPower(-.50);
             }
         if (eleHomeLatch && !elevatorHome.getState())
             { 
@@ -697,8 +536,8 @@ public class Robot2025 extends OpMode
             initArmLatch = true;
             armMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             armMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            armMotor1.setPower(-.35);
-            armMotor2.setPower(-.35);
+            armMotor1.setPower(-.45);
+            armMotor2.setPower(-.45);
             }
         if (initArmLatch && !armHome.getState())
         {

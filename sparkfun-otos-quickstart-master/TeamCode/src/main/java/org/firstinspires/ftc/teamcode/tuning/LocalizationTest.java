@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.SparkFunOTOSDrive;
 import org.firstinspires.ftc.teamcode.TankDrive;
 
-@Disabled
+//@Disabled
 
 public class LocalizationTest extends LinearOpMode {
 
@@ -43,6 +43,10 @@ public class LocalizationTest extends LinearOpMode {
             telemetry.addData("x", drive.pose.position.x);
             telemetry.addData("y", drive.pose.position.y);
             telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
+            telemetry.addData("LeftFront", drive.leftFront.getCurrentPosition());
+            telemetry.addData("LeftRear", drive.leftBack.getCurrentPosition());
+            telemetry.addData("RightFront", drive.rightFront.getCurrentPosition());
+            telemetry.addData("RightRear", drive.rightBack.getCurrentPosition());
             telemetry.update();
 
             TelemetryPacket packet = new TelemetryPacket();
