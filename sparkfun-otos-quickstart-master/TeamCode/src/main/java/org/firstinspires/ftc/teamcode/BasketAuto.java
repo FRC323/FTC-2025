@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
+
 import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
@@ -12,16 +14,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-@Autonomous(name = "TestAuto1", group = "Autonomous")
-public class TestAuto1 extends LinearOpMode {
+@Autonomous(name = "BasketAuto", group = "Autonomous")
+public class BasketAuto extends LinearOpMode {
     public class Elevator {
         private DcMotorEx elevator1;
         private DcMotorEx elevator2;
@@ -125,6 +124,35 @@ public class TestAuto1 extends LinearOpMode {
             return new ElevatorHome();
         }
 
+        public class ElevatorBasket implements Action {
+            private boolean initialized = false;
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized) {
+                    elevator1.setVelocityPIDFCoefficients(1.64, 0.0, 0, 16.4);
+                    elevator2.setVelocityPIDFCoefficients(1.64, 0.0, 0, 16.4);
+                    elevator1.setPositionPIDFCoefficients(15);
+                    elevator2.setPositionPIDFCoefficients(15);
+                    elevator1.setTargetPositionTolerance(15);
+                    elevator2.setTargetPositionTolerance(15);
+                    initialized = true;
+                }
+                elevator1.setTargetPosition(2450);
+                elevator2.setTargetPosition(2450);
+                elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator1.setPower(1.0);
+                elevator2.setPower(1.0);
+
+                return elevator1.getTargetPosition() < 2350;
+            }
+        }
+
+        public Action elevatorBasket() {
+            return new ElevatorBasket();
+        }
+
     }
 
     public class Arm {
@@ -167,8 +195,8 @@ public class TestAuto1 extends LinearOpMode {
                 armMotor2.setTargetPosition(970);
                 armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                armMotor1.setPower(.50);
-                armMotor2.setPower(.50);
+                armMotor1.setPower(.40);
+                armMotor2.setPower(.40);
                 return armMotor1.getTargetPosition() < 900;
             }
         }
@@ -324,7 +352,7 @@ public class TestAuto1 extends LinearOpMode {
         public class WristPickupPos implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                wristRotate1.setPosition(0.44);
+                wristRotate1.setPosition(0.48);
                 return false;
             }
         }
@@ -343,6 +371,18 @@ public class TestAuto1 extends LinearOpMode {
 
         public Action wristVertical() {
             return new WristVertical();
+        }
+
+        public class WristHover implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                wristRotate1.setPosition(0.4);
+                return false;
+            }
+        }
+
+        public Action wristHover() {
+            return new WristHover();
         }
     }
 
@@ -406,7 +446,7 @@ public class TestAuto1 extends LinearOpMode {
 
         @Override
         public void runOpMode() throws InterruptedException {
-            Pose2d initialPose = new Pose2d(9, 63.25, Math.toRadians(0));
+            Pose2d initialPose = new Pose2d(9, 79.25, Math.toRadians(0));
             SparkFunOTOSDrive drive = new SparkFunOTOSDrive(hardwareMap, initialPose);
             //Claw claw = new Claw(hardwareMap);
             Elevator elevator = new Elevator(hardwareMap);
@@ -435,50 +475,50 @@ public class TestAuto1 extends LinearOpMode {
                     .lineToX(35)
                     //vv.waitSeconds(1.0)
                     .stopAndAdd(claw.openClaw())
-                    .stopAndAdd(wrist.wristVertical())
-                    .strafeTo(new Vector2d(28, 43))
-                    .strafeTo(new Vector2d(63, 27))
-                    .turn(Math.toRadians(180))
+                    //vv.stopAndAdd(wrist.wristVertical())
+                    .lineToX(29.5)
+                    .strafeTo(new Vector2d(29.5, 118.5))
                     .stopAndAdd(arm.armDown())
-                    .stopAndAdd(wrist.wristVertical())
-                    .lineToX(14.5)
+                    .stopAndAdd(wrist.wristPickupPos())
+                    .waitSeconds(1)
                     .stopAndAdd(claw.closeClaw())
                     .waitSeconds(.5)
                     .stopAndAdd(arm.armBack())
                     .waitSeconds(.5)
-                    .stopAndAdd(wrist.wristPickupPos())
+                    .turn(Math.toRadians(-45))
                     .stopAndAdd(wristTwist.wristTwistBack())
-                    .stopAndAdd(elevator.elevatorUp())
-                    .strafeTo(new Vector2d(37, 65))
-                    .stopAndAdd(wrist.wristVertical())
-                    .stopAndAdd(elevator.elevatorDn())
+                    .stopAndAdd(elevator.elevatorBasket())
+                    .strafeTo(new Vector2d(14, 129))
                     .waitSeconds(.5)
                     .stopAndAdd(claw.openClaw())
                     .waitSeconds(.5)
-                    .stopAndAdd(arm.armDown())
-                    .strafeTo(new Vector2d(18, 27))
+                    .lineToX(15)
+                    .turnTo(Math.toRadians(0))
                     .stopAndAdd(wristTwist.wristTwistForward())
-                    .stopAndAdd(wrist.wristVertical())
-                    .lineToX(14)
+                    .stopAndAdd(elevator.elevatorDn())
+                    .waitSeconds(1)
+                    .stopAndAdd(arm.armDown())
+                    .stopAndAdd(wrist.wristHover())
+                    .waitSeconds(.5)
+                    .lineToX(28)
+                    .waitSeconds(.5)
+                    .stopAndAdd(wrist.wristPickupPos())
+                    .waitSeconds(.5)
                     .stopAndAdd(claw.closeClaw())
                     .waitSeconds(.5)
                     .stopAndAdd(arm.armBack())
-                    .waitSeconds(.5)
-                    .stopAndAdd(wrist.wristPickupPos())
+                    .turn(Math.toRadians(-45))
                     .stopAndAdd(wristTwist.wristTwistBack())
-                    .stopAndAdd(elevator.elevatorUp())
-                    .strafeTo(new Vector2d(37, 59.5))
-                    .stopAndAdd(wrist.wristVertical())
-                    .stopAndAdd(elevator.elevatorDn())
+                    .stopAndAdd(elevator.elevatorBasket())
+                    .strafeTo(new Vector2d(14, 129))
                     .waitSeconds(.5)
                     .stopAndAdd(claw.openClaw())
                     .waitSeconds(.5)
-                    .stopAndAdd(arm.armHook())
+                    .lineToX(15)
+                    .stopAndAdd(wristTwist.wristTwistForward())
                     .stopAndAdd(elevator.elevatorHome())
-                    .stopAndAdd(wristTwist.wristTwistForward())
-                    .stopAndAdd(wrist.wristPickupPos())
-                    .strafeTo(new Vector2d(18, 27));
-
+                    .stopAndAdd(arm.armHook())
+                    .strafeTo(new Vector2d(54, 108));
             TrajectoryActionBuilder tab2 = drive.actionBuilder(initialPose)
                     //.lineToY(37)
                     //.setTangent(Math.toRadians(0))
@@ -493,7 +533,6 @@ public class TestAuto1 extends LinearOpMode {
                     //.strafeTo(new Vector2d(46, 30))
                     .waitSeconds(3);
             Action trajectoryActionCloseOut = tab1.endTrajectory().fresh()
-                    .strafeTo(new Vector2d(18, 27))
                     .build();
 
             // actions that need to happen on init; for instance, a claw tightening.
