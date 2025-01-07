@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -58,6 +59,7 @@ import org.firstinspires.ftc.teamcode.SparkFunOTOSDrive;
  */
 
 @TeleOp(name="Robot 2025 Iterative", group="Teleop")
+@Disabled
 
 public class Robot2025_Iterative extends OpMode
 {

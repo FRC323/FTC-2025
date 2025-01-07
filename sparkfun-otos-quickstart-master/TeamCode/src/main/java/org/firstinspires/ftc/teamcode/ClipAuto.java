@@ -466,7 +466,7 @@ public class ClipAuto extends LinearOpMode {
                     .stopAndAdd(wrist.wristPickupPos())
                     .stopAndAdd(wristTwist.wristTwistBack())
                     .stopAndAdd(elevator.elevatorUp())
-                    .strafeTo(new Vector2d(37, 59.5))
+                    .strafeTo(new Vector2d(37, 67))
                     .stopAndAdd(wrist.wristVertical())
                     .stopAndAdd(elevator.elevatorDn())
                     .waitSeconds(.5)

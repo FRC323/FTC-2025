@@ -198,12 +198,7 @@ public class Robot2025 extends OpMode
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
       
-        // get a reference to the color and Distance sensor.
-        //leftColor = hardwareMap.get(ColorSensor.class, "leftColor");
-        //rightColor = hardwareMap.get(ColorSensor.class, "rightColor");
-        //leftDistance = hardwareMap.get(DistanceSensor.class, "leftColor");
-        //rightDistance = hardwareMap.get(DistanceSensor.class, "rightColor");
-        // hsvValues is an array that will hold the hue, saturation, and value information.
+
         float hsvValues[] = {0F, 0F, 0F};
         final float values[] = hsvValues;
         final double SCALE_FACTOR = 255;
@@ -348,14 +343,14 @@ public class Robot2025 extends OpMode
 //----------------------------Release Gamepiece---------------------------------
 
             if (gamepad1.left_bumper && releaseSequence <= 40) {
-                if (releaseSequence > -1 && releaseSequence < 30) {
+                if (releaseSequence > -1 && releaseSequence < 20) {
                     wristRotate1.setPosition(.45);
                     //wristRotate2.setPosition(.48);
                     wristTwist.setPosition(0);
                     claw.setPosition(1);
                     releaseSequence++;
                 }
-                if (releaseSequence > 29 && releaseSequence <= 40) {
+                if (releaseSequence > 19 && releaseSequence <= 39) {
                     wristRotate1.setPosition(.40);
                     //wristRotate2.setPosition(.48);
                     claw.setPosition(.5);
@@ -363,7 +358,7 @@ public class Robot2025 extends OpMode
                 }
             }
 
-            if (!gamepad1.left_bumper && releaseSequence > 38) {
+            if (!gamepad1.left_bumper && releaseSequence > 20) {
                 releaseSequence = 0;
                 wristRotate1.setPosition(.4);
                 //wristRotate2.setPosition(.48);
@@ -390,7 +385,7 @@ public class Robot2025 extends OpMode
         double ArmUp2 =gamepad2.right_trigger;
 
          if(!initArmLatch) {
-            if(!gamepad2.left_bumper && !gamepad2.right_bumper && (ArmUp < .5) && ArmUp2 < .5 )
+            if(!gamepad2.left_bumper && !gamepad2.right_bumper && !gamepad1.b && (ArmUp < .5) && ArmUp2 < .5 )
             {
                 double armMotor = -gamepad2.left_stick_y;
                 armMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -542,32 +537,6 @@ public class Robot2025 extends OpMode
                 eleHomeLatch = false;
                 }
 
-       //--------------------------- Climb ---------------------------
-
-        if(gamepad1.b && climbCounter <= 50) {
-            if (climbCounter > -1 && climbCounter < 15) {
-                wristRotate1.setPosition(.9);
-                elevator1.setTargetPosition(900);
-                elevator2.setTargetPosition(900);
-                elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                elevator1.setPower(1.0);
-                elevator2.setPower(1.0);
-                wristTwist.setPosition(.78);
-                claw.setPosition(.5);
-                climbCounter++;
-            }
-
-
-        }
-
-                if (!gamepad1.b && climbCounter > 20) {
-                    climbCounter = 0;
-                    wristRotate1.setPosition(.3);
-                    //wristRotate2.setPosition(.3);
-                    wristTwist.setPosition(.78);
-                    claw.setPosition(1);
-                }
 
 
         //------------------------- Home arm encoder ------------------
@@ -597,82 +566,86 @@ public class Robot2025 extends OpMode
             initArmLatch = false;
         }
 
+        //--------------------------- Climb ---------------------------
+
+        if(gamepad1.b && climbCounter <= 150) {
+            if (climbCounter > -1 && climbCounter < 30) {
+                //wristRotate1.setPosition(.9);
+                elevator1.setTargetPosition(950);
+                elevator2.setTargetPosition(950);
+                elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator1.setPower(1.0);
+                elevator2.setPower(1.0);
+                wristTwist.setPosition(.78);
+                claw.setPosition(.5);
+                climbCounter++;
+            }
+            if (climbCounter > 29 && climbCounter < 60) {
+                wristRotate1.setPosition(.9);
+                armMotor1.setTargetPosition(550);
+                armMotor2.setTargetPosition(550);
+                armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor1.setPower(.80);
+                armMotor2.setPower(.80);
+                climbCounter++;
+            }
+            if (climbCounter > 59 && climbCounter < 90) {
+                elevator1.setTargetPosition(800);
+                elevator2.setTargetPosition(800);
+                elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator1.setPower(-1.0);
+                elevator2.setPower(-1.0);
+                climbCounter++;
+            }
+            if (climbCounter > 89 && climbCounter < 120) {
+                armMotor1.setTargetPosition(850);
+                armMotor2.setTargetPosition(850);
+                armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor1.setPower(.80);
+                armMotor2.setPower(.80);
+                climbCounter++;
+            }
+            if (climbCounter > 119 && climbCounter <= 150) {
+                elevator1.setTargetPosition(50);
+                elevator2.setTargetPosition(50);
+                elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator1.setPower(-1.0);
+                elevator2.setPower(-1.0);
+                armMotor1.setTargetPosition(0);
+                armMotor2.setTargetPosition(0);
+                armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor1.setPower(.50);
+                armMotor2.setPower(.50);
+                climbCounter++;
+            }
+        }
+
+        if (!gamepad1.b && climbCounter > 149) {
+            climbCounter = 0;
+            wristRotate1.setPosition(.9);
+            //wristRotate2.setPosition(.3);
+            wristTwist.setPosition(.78);
+            claw.setPosition(.5);
+        }
+
         firstScan = false;
 
 
-
-
-
-        // Read Odometry Encoders    
-        //double leftDistance = (leftFront.getCurrentPosition())  * -1;  //1350 per in.
-        //double rightDistance = (rightFront.getCurrentPosition()) * -1;//1350 per in.
-        //double sideDistance = (leftRear.getCurrentPosition()) * -1;    //1350 per in.
-        
-        //if(gamepad1.back)
-        //{
-        //    leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //    rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //    leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //    leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //    rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //    leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //} 
-        
-        // **************temporary elevator tuning****************8
-        //elevator1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //elevator2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //elevator3.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //double elevatorPower = gamepad2.right_stick_y;
-        //elevator1.setPower(elevatorPower);
-        //elevator2.setPower(elevatorPower);
-        //elevator3.setPower(elevatorPower);
-        //double velocity = elevator1.getVelocity();
-        //if(velocity > maxVelocity)
-        //    maxVelocity = velocity;
-        //DcMotorControllerEx motorControllerEx = (DcMotorControllerEx)elevator1.getController();
-        //int motorIndex = ((DcMotorEx)elevator1).getPortNumber();
-        //PIDFCoefficients pidOrig = motorControllerEx.getPIDFCoefficients(motorIndex,DcMotor.RunMode.RUN_USING_ENCODER);
-        
-        //telemetry.addData("PID", "%.04f, %.04f, %.0f,%.0f",pidOrig.p, pidOrig.i, pidOrig.d, pidOrig.f);
-        //telemetry.addData("Tolerance",elevator1.getTargetPositionTolerance());
-        
-        // Show the elapsed game time and wheel power.
-        //telemetry.addData("Status", "Run Time: " + runtime.toString());
-        //telemetry.addData("Sticks", "Y (%.2f), X (%.2f) Rot (%.2f)", y, x, rotation);
-        //telemetry.addData("Heading", "(%f2.1)", angles.firstAngle);
-        //telemetry.addData("Distance",
-        //            String.format(Locale.US, "%.02f,  %.02f", leftStoneDistance,rightStoneDistance));
-        //telemetry.addData(String.format(Locale.US,"(%0.2f),(%0.2f)", leftDistance.getDistance(DistanceUnit.CM), rightDistance.getDistance(DistanceUnit.CM)));
-        //telemetry.addData("Actual",  "%7d:%7d:%7d",      elevator1.getCurrentPosition(),
-        //                                                 elevator2.getCurrentPosition(),
-        //                                                 elevator3.getCurrentPosition());
-      //double ccL = (leftColor.red() / leftColor.blue()) * (leftColor.green() / leftColor.blue());
-      //telemetry.addData("CCL",ccL);
-      //double ccR = (rightColor.red() / rightColor.blue()) * (rightColor.green() / rightColor.blue());
-      //telemetry.addData("CCR",ccR);
-        //telemetry.addData("Blue",leftColor.blue());
-        telemetry.addData("EleIndex",elevatorIndex);
-        telemetry.addData("EleHome",elevatorHome.getState());
+        //telemetry.addData("EleIndex",elevatorIndex);
+        //telemetry.addData("EleHome",elevatorHome.getState());
         telemetry.addData("Elevator",elevator1.getCurrentPosition());
         telemetry.addData("Elevator",elevator2.getCurrentPosition());
-        telemetry.addData("ElevatorIndex",elevatorIndex);
+        //telemetry.addData("ElevatorIndex",elevatorIndex);
         telemetry.addData("Arm1",armMotor1.getCurrentPosition());
         telemetry.addData("Arm2",armMotor2.getCurrentPosition());
-        telemetry.addData("ArmHome",armHome.getState());
-        telemetry.addData("pickupSeq",pickupSequence);
-        //telemetry.addData("wrist",wrist);
-        //telemetry.addData("DN",dnPulse);
-        //telemetry.addData("Pickup",pickupSequence);
-        //telemetry.addData("Release",releaseSequence);
-        //telemetry.addData("CapIndex",capIndex);
-        //telemetry.addData("CapReleaseIndex",capReleaseIndex);
-        //telemetry.addData("Wrist",wristMotor.getCurrentPosition());
-        //telemetry.addData("WristHome",wristHome);
-        
-        
-        //telemetry.addData("LeftOdometer",String.format(Locale.US, "%.02f", leftDistance));
-        //telemetry.addData("RightOdometer",String.format(Locale.US, "%.02f", rightDistance));
-        //telemetry.addData("SideOdometer",String.format(Locale.US, "%.02f", sideDistance));
+        //telemetry.addData("ArmHome",armHome.getState());
+        //telemetry.addData("pickupSeq",pickupSequence);
 
     }
 
