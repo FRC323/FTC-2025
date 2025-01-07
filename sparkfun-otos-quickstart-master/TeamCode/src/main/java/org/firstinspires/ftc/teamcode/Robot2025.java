@@ -100,6 +100,8 @@ public class Robot2025 extends OpMode
     boolean initArmLatch = false;
 
     int climbCounter = 0;
+
+    int scoreClipCounter = 0;
     int wristHome;
     int wristEncoder = 0;
     int lastWristEncoder = 0;
@@ -380,12 +382,66 @@ public class Robot2025 extends OpMode
                 clawRotate.setPosition(0.38);
             }
 
+        //-------------------------Clip Scoring ---------------------
+        double clipTrigger =gamepad1.right_trigger;
+
+        if (clipTrigger > .5 && scoreClipCounter <= 60) {
+            if (scoreClipCounter > -1 && scoreClipCounter < 15) {
+                wristRotate1.setPosition(.48);
+                wristTwist.setPosition(.78);
+                elevator1.setTargetPosition(750);
+                elevator2.setTargetPosition(750);
+                elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator1.setPower(1.0);
+                elevator2.setPower(1.0);
+                claw.setPosition(1);
+                scoreClipCounter++;
+            }
+            if (scoreClipCounter > 14 && scoreClipCounter < 30) {
+                armMotor1.setTargetPosition(200);
+                armMotor2.setTargetPosition(200);
+                armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                armMotor1.setPower(.55);
+                armMotor2.setPower(.55);
+                scoreClipCounter++;
+            }
+
+            if (scoreClipCounter > 29 && scoreClipCounter < 50) {
+                wristRotate1.setPosition(.50);
+                elevator1.setTargetPosition(250);
+                elevator2.setTargetPosition(250);
+                elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                elevator1.setPower(1.0);
+                elevator2.setPower(1.0);
+                scoreClipCounter++;
+            }
+
+            if (scoreClipCounter > 49 && scoreClipCounter <= 60) {
+                claw.setPosition(.5);
+                scoreClipCounter++;
+            }
+
+        }
+
+        if (clipTrigger < .5 && scoreClipCounter > 59) {
+            scoreClipCounter = 0;
+            wristRotate1.setPosition(.48);
+            wristTwist.setPosition(.78);
+            claw.setPosition(.5);
+        }
+
+
+
         //----------------------Arm Rotation---------------------------
-         double ArmUp =gamepad2.left_trigger;
-        double ArmUp2 =gamepad2.right_trigger;
+         double ArmUp = gamepad2.left_trigger;
+        double ArmUp2 = gamepad2.right_trigger;
+        double ArmUp3 = gamepad1.left_trigger;
 
          if(!initArmLatch) {
-            if(!gamepad2.left_bumper && !gamepad2.right_bumper && !gamepad1.b && (ArmUp < .5) && ArmUp2 < .5 )
+            if(!gamepad2.left_bumper && !gamepad2.right_bumper && !gamepad1.b && (ArmUp < .5) && ArmUp2 < .5 && ArmUp3 < .5 && clipTrigger < .5 )
             {
                 double armMotor = -gamepad2.left_stick_y;
                 armMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -393,7 +449,7 @@ public class Robot2025 extends OpMode
                 armMotor1.setPower(armMotor);
                 armMotor2.setPower(armMotor);
             }
-        if(gamepad2.left_bumper && !gamepad2.dpad_right)
+        if(gamepad2.left_bumper && !gamepad2.dpad_right && elevator1.getCurrentPosition() < 450)
             {
             armMotor1.setTargetPosition(-65);
             armMotor2.setTargetPosition(-65);
@@ -420,7 +476,7 @@ public class Robot2025 extends OpMode
                  armMotor2.setPower(.50);
              }
 
-         else if((ArmUp > .5 || ArmUp2 > .5) && elevator1.getCurrentPosition() < 450)
+         else if((ArmUp > .5 || ArmUp2 > .5 || ArmUp3 > .5) && elevator1.getCurrentPosition() < 450)
             {
                 armMotor1.setTargetPosition(0);
                 armMotor2.setTargetPosition(0);
@@ -443,7 +499,7 @@ public class Robot2025 extends OpMode
             if(elevatorIndex > 5)
                 elevatorIndex = 5;
 
-            if(gamepad2.left_bumper)
+            if(gamepad2.left_bumper && armMotor1.getCurrentPosition() < 200 )
                     elevatorIndex = 6;
             elevatorHeight = elevatorSetpoints[elevatorIndex];
             
