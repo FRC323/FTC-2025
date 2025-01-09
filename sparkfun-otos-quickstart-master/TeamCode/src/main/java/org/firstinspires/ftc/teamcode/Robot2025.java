@@ -355,14 +355,14 @@ public class Robot2025 extends OpMode
                 if (releaseSequence > 19 && releaseSequence <= 39) {
                     wristRotate1.setPosition(.40);
                     //wristRotate2.setPosition(.48);
-                    claw.setPosition(.5);
+                    claw.setPosition(.50);
                     releaseSequence++;
                 }
             }
 
             if (!gamepad1.left_bumper && releaseSequence > 20) {
                 releaseSequence = 0;
-                wristRotate1.setPosition(.4);
+                wristRotate1.setPosition(.55);
                 //wristRotate2.setPosition(.48);
             wristTwist.setPosition(.78);
             claw.setPosition(.5);
@@ -666,8 +666,8 @@ public class Robot2025 extends OpMode
                 climbCounter++;
             }
             if (climbCounter > 119 && climbCounter <= 150) {
-                elevator1.setTargetPosition(50);
-                elevator2.setTargetPosition(50);
+                elevator1.setTargetPosition(0);
+                elevator2.setTargetPosition(0);
                 elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator1.setPower(-1.0);
