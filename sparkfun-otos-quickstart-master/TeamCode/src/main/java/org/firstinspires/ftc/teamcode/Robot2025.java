@@ -278,8 +278,8 @@ public class Robot2025 extends OpMode
         //y = y * .68;
         //rotation = rotation * .55;
         //}
-        x = .8*Math.pow(x,3)+(1-.8)*x;
-        y = .8*Math.pow(y,3)+(1-.8)*y;
+        //x = .8*Math.pow(x,3)+(1-.8)*x;
+        //y = .8*Math.pow(y,3)+(1-.8)*y;
         rotation = (.7*Math.pow(rotation,3)+(1-.7)*rotation);
         
         //---------------------- Field-Centric Calculations ----------- 
