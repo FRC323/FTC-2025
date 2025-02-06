@@ -82,8 +82,8 @@ public class ClipAuto extends LinearOpMode {
                     elevator2.setTargetPositionTolerance(15);
                     initialized = true;
                 }
-                elevator1.setTargetPosition(325);
-                elevator2.setTargetPosition(325);
+                elevator1.setTargetPosition(300);
+                elevator2.setTargetPosition(300);
                 elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator1.setPower(-0.8);
