@@ -410,8 +410,8 @@ public class Robot2025 extends OpMode
 
             if (scoreClipCounter > 29 && scoreClipCounter < 50) {
                 wristRotate1.setPosition(.50);
-                elevator1.setTargetPosition(250);
-                elevator2.setTargetPosition(250);
+                elevator1.setTargetPosition(225);
+                elevator2.setTargetPosition(225);
                 elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator1.setPower(1.0);
@@ -441,7 +441,7 @@ public class Robot2025 extends OpMode
         double ArmUp3 = gamepad1.left_trigger;
 
          if(!initArmLatch) {
-            if(!gamepad2.left_bumper && !gamepad2.right_bumper && !gamepad1.b && (ArmUp < .5) && ArmUp2 < .5 && ArmUp3 < .5 && clipTrigger < .5 )
+            if(!gamepad2.left_bumper && !gamepad2.right_bumper && !gamepad1.b && (ArmUp < .5) && ArmUp2 < .5 && ArmUp3 < .5 && clipTrigger < .5 && !gamepad1.y)
             {
                 double armMotor = -gamepad2.left_stick_y;
                 armMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -466,7 +466,7 @@ public class Robot2025 extends OpMode
             armMotor1.setPower(.50);
             armMotor2.setPower(.50);
         }
-         else if(gamepad2.right_bumper)
+         else if(gamepad2.right_bumper || gamepad1.y)
              {
                  armMotor1.setTargetPosition(970);
                  armMotor2.setTargetPosition(970);
@@ -568,7 +568,7 @@ public class Robot2025 extends OpMode
 
         //------------------------- Home elevator encoders ------------------
         
-        if((gamepad2.back) &! eleHomeLatch)
+        if((gamepad1.back) || (gamepad2.back) &! eleHomeLatch)
             {
             eleHomeLatch = true;
             elevator1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -597,7 +597,7 @@ public class Robot2025 extends OpMode
 
         //------------------------- Home arm encoder ------------------
         //double wrist = gamepad1.right_trigger;
-        if((gamepad2.start) || firstScan &! initArmLatch)
+        if((gamepad1.start) || (gamepad2.start) || firstScan &! initArmLatch)
             {
             initArmLatch = true;
             armMotor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

@@ -162,8 +162,8 @@ public class ClipAuto extends LinearOpMode {
                     armMotor2.setTargetPositionTolerance(20);
                     initialized = true;
                 }
-                armMotor1.setTargetPosition(970);
-                armMotor2.setTargetPosition(970);
+                armMotor1.setTargetPosition(900);
+                armMotor2.setTargetPosition(900);
                 armMotor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor1.setPower(.50);
