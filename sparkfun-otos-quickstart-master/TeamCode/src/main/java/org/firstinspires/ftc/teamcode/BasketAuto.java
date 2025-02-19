@@ -469,7 +469,7 @@ public class BasketAuto extends LinearOpMode {
                     .stopAndAdd(wrist.wristPickupPos())
                     .stopAndAdd(arm.armHook())
                     .stopAndAdd(elevator.elevatorUp())
-                    .waitSeconds(6)
+                    .waitSeconds(1)
                     .lineToX(37.5)
                     .stopAndAdd(elevator.elevatorDn())
                     .lineToX(35)
