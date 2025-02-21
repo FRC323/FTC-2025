@@ -395,7 +395,7 @@ public class Robot2025 extends OpMode
                 elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 elevator1.setPower(1.0);
                 elevator2.setPower(1.0);
-                claw.setPosition(1);
+                claw.setPosition(.7);
                 scoreClipCounter++;
             }
             if (scoreClipCounter > 14 && scoreClipCounter < 30) {
@@ -405,6 +405,7 @@ public class Robot2025 extends OpMode
                 armMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 armMotor1.setPower(.55);
                 armMotor2.setPower(.55);
+                claw.setPosition(1);
                 scoreClipCounter++;
             }
 
@@ -431,6 +432,12 @@ public class Robot2025 extends OpMode
             wristRotate1.setPosition(.48);
             wristTwist.setPosition(.78);
             claw.setPosition(.5);
+            elevator1.setTargetPosition(350);
+            elevator2.setTargetPosition(350);
+            elevator1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            elevator2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            elevator1.setPower(1.0);
+            elevator2.setPower(1.0);
         }
 
 
